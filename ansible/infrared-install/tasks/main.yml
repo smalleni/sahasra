@@ -1,0 +1,37 @@
+---
+# tasks file for infrared-install
+
+---
+- name: Install dependencies
+  package: 
+    name: "{{ item }}"
+    state: installed
+  with_items:
+      - git
+      - gcc
+      - libffi-devel
+      - python-virtualenv
+      - libselinux-python
+      - openssl-devel
+
+- name: clone infrared
+  git:
+    repo: https://github.com/redhat-openstack/infrared.git
+    dest: "{{ lookup('env','WORKSPACE') }}/infrared"
+    force: yes
+
+- name: create venv with latest pip, setuptools and pbr
+  pip:
+    virtualenv: "{{ infrared_dir }}/.venv"
+    name: "{{ item }}"
+    state: latest
+  with_items:
+      - pip
+      - setuptools
+    
+- name: install infrared
+  shell: |
+    source .venv/bin/activate
+    pip install .
+  args:
+    chdir: "{{ infrared_dir }}" 
