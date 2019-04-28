@@ -1,0 +1,33 @@
+---
+# defaults file for infrared-provision
+---
+openstack:
+  undercloud:
+    count: 1
+    vcpus: 8
+    memory: 24576
+  controller:
+    count: 1
+    vcpus: 4
+    memory: 8192
+  compute:
+    count: 1
+    vcpus: 8
+    memory: 32768
+openshift:
+  master:
+    count: 1
+    vcpus: 4
+    memory: 16384
+   worker:
+    count: 1
+    vcpus: 4
+    memory: 8192
+  infra:
+    count: 1
+    vcpus: 2
+    memory: 8192
+  tester:
+    count: 1
+    vcpus: 2
+    memory: 4096

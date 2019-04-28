@@ -1,0 +1,4 @@
+openstack_version: 14
+openstack_build: passed_phase2
+hypervisor:
+host_key: ~/.ssh/id_rsa

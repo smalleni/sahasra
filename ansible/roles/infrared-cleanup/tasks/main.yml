@@ -1,0 +1,8 @@
+---
+# tasks file for infrared-cleanup
+- name: cleanup deployment
+  shell: |
+    source {{ infrared_venv }}
+    infrared virsh --cleanup yes --host-address {{ hypervisor }} --host-key {{ host_key }}
+  args:
+    chdir: "{{ infrared_dir }}"

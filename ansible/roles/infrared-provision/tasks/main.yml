@@ -1,0 +1,22 @@
+---
+# tasks file for infrared-provision
+- name: add infrared virsh plugin
+  shell: |
+    source {{ infrared_venv }}
+    infrared plugin add plugins/virsh
+  args:
+    chdir: "{{ infrared_dir }}"
+  ignore_errors: true
+
+- name: template node topology files
+  template:
+    src:  "{{ item }}.yml.j2"
+    dest:  "{{ infrared_dir }}/plugins/virsh/vars/topology/nodes/{{ item }}.yml"
+  loop: [ controller, compute, undercloud, master, worker, infra, tester ]
+ 
+- name: provision vms
+  shell: |
+    source {{ infrared_venv }}
+    infrared virsh --host-address {{ hypervisor }} --host-key ~/.ssh/id_rsa --topology-nodes "undercloud:{{ openstack.undercloud.count }},controller:{{ openstack.controller.count }},compute:{{ openstack.compute.count }},openshift-master:{{ openshift.master.count }},openshift-worker:{{ openshift.worker.count }},openshift-infra:{{ openshift.infra.count }},openshift-tester:{{ openshift.tester.count }}"
+  args:
+    chdir: "{{ infrared_dir }}"
