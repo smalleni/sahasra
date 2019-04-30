@@ -1,0 +1,3 @@
+---
+# defaults file for infrared-openshift
+openshift_plugin_repo:

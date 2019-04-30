@@ -1,0 +1,29 @@
+---
+# tasks file for infrared-openshift
+- name: clone openshift plugin
+  git:
+    repo: "{{ openshift_plugin_repo }}"
+    dest: "{{ lookup('env','WORKSPACE') }}/infrared/plugins"
+    force: yes
+
+- name: add infrared openshift plugin
+  shell: |
+    source {{infrared_venv }}
+    infrared plugin add --revision ocp3 plugins/openshift-ir-plugin
+  args:
+   chdir: "{{ infrared_dir }}"
+  ignore_errors: true
+
+- name: install dns
+  shell: |
+    source {{ infrared_venv }}
+    infrared openshift --tripleo-dns yes --openshift-release 3.11
+  args:
+    chdir: "{{ infrared_dir }}"
+
+- name: install openshift
+  shell: |
+    source {{ infrared_venv }}
+    infrared openshift --tripleo-deploy yes --openshift-release 3.11
+  args:
+    chdir: "{{ infrared_dir }}"

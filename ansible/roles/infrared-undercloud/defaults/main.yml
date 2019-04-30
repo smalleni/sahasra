@@ -1,0 +1,4 @@
+---
+# defaults file for infrared-undercloud
+openstack_version: 14
+openstack_build: passed_phase2
