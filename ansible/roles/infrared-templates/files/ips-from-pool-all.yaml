@@ -1,0 +1,8 @@
+# Environment file demonstrating how to pre-assign IPs to all node types
+parameter_defaults:
+  ControllerIPs:
+    storage_mgmt:
+    - 172.17.1.160
+  ComputeIPs:
+    storage_mgmt:
+    - 172.17.1.170

@@ -12,7 +12,7 @@
 - name: install undercloud
   shell: | 
     source {{ infrared_venv }}
-    infrared tripleo-undercloud --version {{ openstack_version }} --images-task rpm --build {{ openstack_build }}
+    infrared tripleo-undercloud --version {{ openstack.version }} --images-task rpm --build {{ openstack.build }}
   args:
     chdir: "{{ infrared_dir }}"
 

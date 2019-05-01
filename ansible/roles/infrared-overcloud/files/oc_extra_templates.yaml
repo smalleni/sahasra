@@ -1,0 +1,5 @@
+tripleo_heat_templates:
+    - /home/stack/networks-disable.yaml
+    - /home/stack/network-environment.yaml
+    - /home/stack/ips-from-pool-all.yaml
+    - /home/stack/disable-telemetry.yaml

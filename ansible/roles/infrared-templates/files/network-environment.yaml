@@ -1,0 +1,39 @@
+parameter_defaults:
+    ControlPlaneDefaultRoute: 192.168.24.1
+    ControlPlaneSubnetCidr: '24'
+    DnsServers:
+    - 10.0.0.1
+    EC2MetadataIp: 192.168.24.1
+    ExternalAllocationPools:
+    -   end: 10.0.0.149
+        start: 10.0.0.101
+    ExternalInterfaceDefaultRoute: 10.0.0.1
+    ExternalNetCidr: 10.0.0.0/24
+    ExternalNetworkVlanID: 10
+    InternalApiAllocationPools:
+    -   end: 10.131.0.149
+        start: 10.131.0.10
+    InternalApiNetCidr: 10.131.0.0/24
+    NeutronBridgeMappings: datacentre:br-ex,tenant:br-isolated
+    NeutronExternalNetworkBridge: ''
+    NeutronNetworkType: vxlan
+    NeutronNetworkVLANRanges: tenant:1000:2000
+    NeutronTunnelTypes: vxlan
+    StorageAllocationPools:
+    -   end: 172.17.3.149
+        start: 172.17.3.10
+    StorageMgmtAllocationPools:
+    -   end: 172.17.1.149
+        start: 172.17.1.10
+    StorageMgmtNetCidr: 172.17.1.0/24
+    StorageMgmtNetworkVlanID: 20
+    StorageNetCidr: 172.17.3.0/24
+    StorageNetworkVlanID: 30
+    TenantAllocationPools:
+    -   end: 172.17.2.149
+        start: 172.17.2.10
+    TenantNetCidr: 172.17.2.0/24
+    TenantNetworkVlanID: 50
+resource_registry:
+    OS::TripleO::Compute::Net::SoftwareConfig: /home/stack/osp/compute.yaml
+    OS::TripleO::Controller::Net::SoftwareConfig: /home/stack/osp/controller.yaml

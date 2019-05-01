@@ -1,0 +1,14 @@
+---
+# tasks file for infrared-hosts
+- name: copy needed files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ playbook_dir }}"
+    owner: root
+    mode: 600
+  loop:
+    - "{{ infrared_workspace }}/.workspaces/active/hosts"
+    - "{{ infrared_workspace }}/.workspaces/active/ansible.ssh.config"
+    - "{{ infrared_workspace }}/ansible.cfg"
+
+

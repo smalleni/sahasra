@@ -1,0 +1,10 @@
+---
+# tasks file for infrared-templates
+- name: Copy each file over that matches the given pattern
+  copy:
+    src: "{{ item }}"
+    dest: /home/stack/
+    owner: "stack"
+    mode: 0664
+  with_fileglob:
+    - "*"
