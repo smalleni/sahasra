@@ -1,6 +1,5 @@
 ---
 # tasks file for infrared-undercloud
----
 - name: add infrared undercloud plugin
   shell: |
     source {{infrared_venv }}

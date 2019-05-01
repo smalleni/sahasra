@@ -1,7 +1,6 @@
 ---
 - hosts: localhost
   connection: local
-  become: true
   vars_files:
     - vars/main.yml
   pre_tasks:
@@ -18,8 +17,3 @@
     - { role: infrared-hosts, tags: [setup] }
     - { role: infrared-undercloud, tags: [setup] }
 
-- hosts: undercloud
-  vars_file:
-    - vars/main.yml
-   roles:
-     - role: prepare-templates

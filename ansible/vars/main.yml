@@ -5,24 +5,25 @@ openstack:
       count: 1
       vcpus: 8
       memory: 24576
-   controller:
-     count: 1
-     vcpus: 4
-     memory: 8192
-   compute:
-     count: 1
-     vcpus: 8
-     memory: 32768
+    controller:
+      count: 1
+      vcpus: 4
+      memory: 8192
+    compute:
+      count: 1
+      vcpus: 8
+      memory: 32768
 infrared:
-    hypervisor:
+    hypervisor: f12-h17-b07-5039ms.rdu2.scalelab.redhat.com
     host_key: ~/.ssh/id_rsa
     openshift_plugin_repo:
+    overcommit: true
 openshift:
   master:
     count: 1
     vcpus: 4
     memory: 16384
-   worker:
+  worker:
     count: 1
     vcpus: 4
     memory: 8192

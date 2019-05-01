@@ -24,6 +24,6 @@
 - name: provision vms
   shell: |
     source {{ infrared_venv }}
-    infrared virsh --host-address {{ hypervisor }} --host-key ~/.ssh/id_rsa --topology-nodes "undercloud:{{ openstack.undercloud.count }},controller:{{ openstack.controller.count }},compute:{{ openstack.compute.count }},openshift-master:{{ openshift.master.count }},openshift-worker:{{ openshift.worker.count }},openshift-infra:{{ openshift.infra.count }},openshift-tester:{{ openshift.tester.count }}"
+    infrared virsh --host-address {{ infrared.hypervisor }} --host-key {{ infrared.host_key }} --host-memory-overcommit {{ infrared.overcommit }} --topology-nodes "undercloud:{{ openstack.undercloud.count }},controller:{{ openstack.controller.count }},compute:{{ openstack.compute.count }},openshift-master:{{ openshift.master.count }},openshift-worker:{{ openshift.worker.count }},openshift-infra:{{ openshift.infra.count }},openshift-tester:{{ openshift.tester.count }}"
   args:
     chdir: "{{ infrared_dir }}"

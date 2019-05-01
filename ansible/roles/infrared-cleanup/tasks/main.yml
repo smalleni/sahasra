@@ -3,6 +3,6 @@
 - name: cleanup deployment
   shell: |
     source {{ infrared_venv }}
-    infrared virsh --cleanup yes --host-address {{ hypervisor }} --host-key {{ host_key }}
+    infrared virsh --cleanup yes --host-address {{ infrared.hypervisor }} --host-key {{ infrared.host_key }}
   args:
     chdir: "{{ infrared_dir }}"

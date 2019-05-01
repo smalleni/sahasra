@@ -1,12 +1,10 @@
 ---
 # tasks file for infrared-install
-
----
 - name: Install dependencies
   package: 
     name: "{{ item }}"
     state: installed
-  with_items:
+  loop:
       - git
       - gcc
       - libffi-devel
@@ -23,11 +21,8 @@
 - name: create venv with latest pip, setuptools and pbr
   pip:
     virtualenv: "{{ infrared_dir }}/.venv"
-    name: "{{ item }}"
+    name: [ pip, setuptools ]
     state: latest
-  with_items:
-      - pip
-      - setuptools
     
 - name: install infrared
   shell: |

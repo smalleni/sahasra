@@ -1,3 +1,6 @@
 ---
 # defaults file for infrared-openshift
-openshift_plugin_repo:
+infrared:
+  openshift_plugin_repo:
+openshift:
+  release:
