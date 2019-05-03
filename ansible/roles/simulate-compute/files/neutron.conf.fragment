@@ -1,0 +1,3 @@
+[DEFAULT]
+host=%(container_hostname)s
+

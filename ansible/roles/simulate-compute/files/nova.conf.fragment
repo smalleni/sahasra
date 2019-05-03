@@ -1,0 +1,4 @@
+[DEFAULT]
+my_ip=%(container_ip)s
+host=%(container_hostname)s
+compute_driver=fake_vif.OVSFakeDriver

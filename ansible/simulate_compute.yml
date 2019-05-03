@@ -1,0 +1,104 @@
+
+- hosts: openshift-worker-0
+  tasks: 
+    - name: include vars
+      include_vars:
+          dir: vars
+
+- hosts: controller-0
+  tasks: 
+    - name: include vars
+      include_vars:
+          dir: vars
+- hosts: undercloud
+  tasks:
+    - name:
+      copy:
+          src: roles/simulate-compute/files
+          dest: /home/stack
+
+- hosts: compute-0
+  remote_user: heat_admin
+  tasks:
+    - name: copy config from compute to undercloud
+      synchronize:
+          src: "{{ item }}"
+          dest: /home/stack/files
+          mode: pull
+          set_remote_user: no
+      delegate_to: undercloud-0
+      with_items:
+        - /etc/hosts
+        - /var/lib/config-data/puppet-generated/nova_libvirt/etc/nova/nova.conf
+        - /var/lib/config-data/puppet-generated/neutron/etc/neutron/neutron.conf
+       - /var/lib/config-data/puppet-generated/neutron/etc/neutron/plugins/ml2/openvswitch_agent.ini
+      become: yes
+
+- hosts: openshift-worker-0
+  tasks:
+    - name: copy files from undercloud to worker
+      synchronize:
+         src: /home/stack/files
+         dest: /home/heat-admin/
+         set_remote_user: false
+      delegate_to: undercloud-0
+
+- hosts: openshift-worker-0
+  tasks:
+    - name: create docker image
+      docker_image:
+          name: 192.168.24.1:8787/compute_node
+          path: "/home/heat-admin/files"
+          force: yes
+          buildargs:
+              delorean_url: "{{ delorean_url }}"
+              delorean_deps_url: "{{ delorean_deps_url }}"
+          push: yes
+      become: yes
+
+- hosts: controller
+  tasks:
+    - name: create vxlan ports to workers
+      command: bash -lc "ovs-vsctl add-port br0 vxlan_{{item}} -- set interface vxlan_{{item}} type=vxlan options:remote_ip={{item}}"
+      with_items:
+        - "{{ workers_ips }}"
+      become: yes
+
+- hosts: controller
+  tasks:
+    - name: create route to cluster cidr
+      command: bash -lc "ip r a {{ cluster_cidr }} dev br0"
+      become: yes
+
+- hosts: openshift-worker
+  tasks:
+    - name: create ovs-flows to controllers
+      command: bash -lc "ovs-ofctl add-flow -O OpenFlow13 br0 'table=90,priority=100,ip,nw_dst={{item.0}},actions=move:NXM_NX_REG0[]->NXM_NX_TUN_ID[0..31],set_field:{{item.1}}->tun_dst,output:1';
+                        ovs-ofctl add-flow -O OpenFlow13 br0 'table=50,priority=100,arp,arp_tpa={{item.0}},actions=move:NXM_NX_REG0[]->NXM_NX_TUN_ID[0..31],set_field:{{item.1}}->tun_dst,output:1';
+                        ovs-ofctl add-flow -O OpenFlow13 br0 'table=10,priority=100,tun_src={{item.1}},actions=goto_table:30'"
+      with_together:
+        - "{{ controllers_cluster_ips }}"
+        - "{{ controllers_ips }}"
+      become: yes
+
+- hosts: openshift-master-0
+  tasks:
+    - name: copy fake-replicaset.yaml from undercloud to master
+      synchronize:
+         src: /home/stack/files/fake-replicaset.yaml
+         dest: /home/tripleo-admin/
+         set_remote_user: false
+      delegate_to: undercloud-0
+      become: yes
+      become_user: tripleo-admin
+
+- hosts: openshift-master-0
+  tasks:
+    - name: run fake-replicaset.yaml
+      command: bash -lc "kubectl create -f /home/tripleo-admin/fake-replicaset.yaml"
+      become: yes
+      become_user: tripleo-admin
+
+#- hosts: localhost
+#  roles:
+#  - simulate-compute

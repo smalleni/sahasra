@@ -1,0 +1,8 @@
+[ovs]
+local_ip=%(container_ip)s
+
+[securitygroup]
+firewall_driver = noop
+
+
+
