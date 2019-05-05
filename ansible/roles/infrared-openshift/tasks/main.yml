@@ -1,5 +1,9 @@
 ---
 # tasks file for infrared-openshift
+
+- name: set git config to enable cloging
+  command: git config --global http.sslVerify false
+
 - name: clone openshift plugin
   git:
     repo: "{{ infrared.openshift_plugin_repo }}"

@@ -8,13 +8,7 @@
       set_fact:
         infrared_dir: "{{ lookup('env','WORKSPACE') }}/infrared"
         infrared_venv: "{{ lookup('env','WORKSPACE') }}/infrared/.venv/bin/activate"
-        infrared_workspace: "{{ lookup('env', 'HOME') }}/.infrared/"
-      tags:
-        - always
   roles:
-    - infrared-install
-    - infrared-provision
-    - infrared-hosts
-    - infrared-undercloud
-    - infrared-templates
+    - infrared-openshift
+    - infrared-overcloud
 
