@@ -10,6 +10,7 @@
     - name: include vars
       include_vars:
           dir: vars
+
 - hosts: undercloud
   tasks:
     - name:
@@ -94,11 +95,34 @@
 
 - hosts: openshift-master-0
   tasks:
+    - name: set master as unschedulable
+      command: bash -lc "oc adm policy add-scc-to-user privileged -z default"
+      become: yes
+      become_user: tripleo-admin
+
+- hosts: openshift-master-0
+  tasks:
+    - name: set master as unschedulable
+      command: bash -lc "oc adm manage-node openshift-master-0 --schedulable=false"
+      become: yes
+      become_user: tripleo-admin
+
+- hosts: openshift-infra-0
+  tasks:
+    - name: set master as unschedulable
+      command: bash -lc "oc adm manage-node openshift-master-0 --schedulable=false"
+      become: yes
+      become_user: tripleo-admin
+
+- hosts: openshift-master-0
+  tasks:
     - name: run fake-replicaset.yaml
       command: bash -lc "kubectl create -f /home/tripleo-admin/fake-replicaset.yaml"
       become: yes
       become_user: tripleo-admin
 
-#- hosts: localhost
-#  roles:
-#  - simulate-compute
+- hosts: controller-0
+  tasks:
+    - name: discover compute hosts
+      command: bash -lc "docker exec nova_api nova-manage cell_v2 discover_hosts"
+      become: yes
