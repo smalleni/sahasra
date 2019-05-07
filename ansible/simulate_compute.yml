@@ -11,6 +11,78 @@
       include_vars:
           dir: vars
 
+- hosts: undercloud-0
+  remote_user: stack
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: get the password from stackrc
+      shell: |
+        source /home/stack/stackrc
+        echo $OS_PASSWORD
+      register: password
+    - name: get the auth_url from stackrc
+      shell: |
+        source /home/stack/stackrc
+        echo $OS_AUTH_URL
+      register: authurl
+    - name: store undercloud credentials
+      set_fact:
+        undercloud_password: "{{ password.stdout }}"
+        auth_url: "{{ authurl.stdout }}"
+    - name: print password variables
+      debug: var=undercloud_password
+    - name: print auth_url variable
+      debug: var=auth_url
+    - name: create cloud.yml
+      template:
+        src: clouds.yml.j2
+        dest: /home/stack/clouds.yml
+          
+- hosts: localhost
+  remote_user: stack
+  vars:
+    controllers_ips: []
+    workers_ips: []
+    controllers_cluster_ips: []
+  tasks:
+  - name: os get controller ports
+    os_port_facts:
+      cloud: undercloud
+      port: controller-*_StorageMgmt
+    register: controller_ports
+    delegate_to: undercloud-0
+  - name: build controller ips
+    set_fact:
+      controllers_ips: "{{ controllers_ips }} + [ '{{ item.fixed_ips[0].ip_address }}' ]"
+    with_items: "{{ controller_ports.ansible_facts.openstack_ports}}"
+  - name: os get worker ports
+    os_port_facts:
+      cloud: undercloud
+      port: openshift-worker-*_InternalApi
+    register: worker_ports
+    delegate_to: undercloud-0
+  - name: build worker ips
+    set_fact:
+      workers_ips: "{{ workers_ips }} + [ '{{ item.fixed_ips[0].ip_address }}' ]"
+    with_items: "{{ worker_ports.ansible_facts.openstack_ports}}"
+  - name: os get controller cluster ports
+    os_port_facts:
+      cloud: undercloud
+      port: controller-*_InternalApi
+    register: controller_cluster_ports
+    delegate_to: undercloud-0
+  - name: build controller cluster ips
+    set_fact:
+      controllers_cluster_ips: "{{ controllers_cluster_ips }} + [ '{{ item.fixed_ips[0].ip_address }}' ]"
+    with_items: "{{ controller_cluster_ports.ansible_facts.openstack_ports}}"
+  - name: print controller ips
+    debug: var=controllers_ips
+  - name: print controller cluster ips
+    debug: var=controllers_cluster_ips
+  - name: print worker ips
+    debug: var=workers_ips
+
 - hosts: undercloud
   tasks:
     - name:
