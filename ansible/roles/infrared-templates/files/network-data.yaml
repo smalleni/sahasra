@@ -6,7 +6,7 @@
   allocation_pools: [{'start': '172.17.3.10', 'end': '172.17.3.149'}]
 
 - name: InternalApi
-  name_lower: internal_api
+  name_lower: internal_api_osp
   vlan: 60
   vip: true
   ip_subnet: '10.131.0.0/24'

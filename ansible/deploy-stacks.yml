@@ -9,6 +9,7 @@
         infrared_dir: "{{ lookup('env','WORKSPACE') }}/infrared"
         infrared_venv: "{{ lookup('env','WORKSPACE') }}/infrared/.venv/bin/activate"
   roles:
+    - infrared-introspect
     - infrared-openshift
     - infrared-overcloud
 

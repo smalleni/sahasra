@@ -7,19 +7,6 @@
   args:
     chdir: "{{ infrared_dir }}"
   ignore_errors: true
-
-- name: template node topology files
-  template:
-    src:  "{{ item }}.yml.j2"
-    dest:  "{{ infrared_dir }}/plugins/virsh/vars/topology/nodes/{{ item }}.yml"
-  loop:
-    - controller
-    - compute
-    - undercloud
-    - master
-    - worker
-    - tester
-    - infra
  
 - name: provision vms
   shell: |

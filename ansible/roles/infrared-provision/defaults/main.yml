@@ -14,8 +14,8 @@ openstack:
     vcpus: 8
     memory: 32768
 infrared:
-  hypervisor:
-  host_key:
+  hypervisor: 127.0.0.1
+  host_key:  ~/.ssh/id_rsa
   overcommit: true
 openshift:
   master:

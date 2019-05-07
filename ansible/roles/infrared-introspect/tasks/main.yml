@@ -1,0 +1,18 @@
+---
+# tasks file for infrared-introspect
+
+- name: add infrared overcloud plugin
+  shell: |
+    source {{infrared_venv }}
+    infrared plugin add plugins/tripleo-overcloud
+  args:
+   chdir: "{{ infrared_dir }}"
+  ignore_errors: true
+
+- name: tag nodes
+  shell: |
+    source {{ infrared_venv }}
+    infrared tripleo-overcloud -v --introspect yes --tagging yes --deploy no --deployment-files virt --ansible-args='tag=introspect,tag' 
+  args:
+    chdir: "{{ infrared_dir }}"
+  ignore_errors: true

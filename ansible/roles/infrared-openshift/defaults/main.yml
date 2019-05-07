@@ -1,6 +1,7 @@
 ---
 # defaults file for infrared-openshift
 infrared:
-  openshift_plugin_repo:
+  openshift_plugin_repo: https://code.engineering.redhat.com/gerrit/openshift-ir-plugin.git
+  openshift_plugin_name: openshift-ir-plugin
 openshift:
-  release:
+  release: 3.11
