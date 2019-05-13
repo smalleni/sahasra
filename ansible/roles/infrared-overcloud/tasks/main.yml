@@ -1,7 +1,64 @@
 ---
 # tasks file for infrared-overcloud
+- name: copy extra templates
+  copy:
+    src: oc_extra_templates.yaml
+    dest: "{{ infrared_dir }}/plugins/tripleo-overcloud/vars/deployment/files/"
+  become: yes
 
----
+# copy network_data, networks-disable.yaml
+- name: Copy each file over that matches the given pattern
+  copy:
+    src: "{{ item }}"
+    dest: /home/stack/
+  with_fileglob:
+    - "*"
+  delegate_to: undercloud-0
+
+- name: get instackenv.json from undercloud
+  fetch:
+    src: /home/stack/instackenv.json
+    dest: "{{ infrared_dir }}/plugins/tripleo-overcloud/vars/deployment/files/instackenv.json"
+    flat: yes
+  delegate_to: undercloud-0
+
+- name: get network
+  shell: |
+    source /home/stack/stackrc
+    openstack network list --name internal_api -c ID -f value
+  register: network_uid
+  ignore_errors: true
+  delegate_to: undercloud-0
+
+- name: get segment
+  shell: |
+    source /home/stack/stackrc
+    openstack network segment list --network {{ network_uid.stdout }} -c ID -f value
+  register: segment_id
+  ignore_errors: true
+  delegate_to: undercloud-0
+
+- name: oc create internal_api_ocp segment for internal_api network
+  shell: |
+    source /home/stack/stackrc
+    openstack network segment create --physical-network internal_api_ocp --network-type flat --network {{ network_uid.stdout }} internal_api_ocp
+  ignore_errors: true
+  delegate_to: undercloud-0
+
+- name:  delete old internal_api segment for internal_api network
+  shell: |
+    source /home/stack/stackrc
+    openstack network segment delete {{ segment_id.stdout }}
+  ignore_errors: true
+  delegate_to: undercloud-0
+
+- name:  rename internal_api network to internal_api_ocp
+  shell: |
+    source /home/stack/stackrc
+    openstack network set --name internal_api_ocp {{ network_uid.stdout }}
+  ignore_errors: true
+  delegate_to: undercloud-0
+
 - name: add infrared overcloud plugin
   shell: |
     source {{infrared_venv }}
@@ -10,15 +67,10 @@
    chdir: "{{ infrared_dir }}"
   ignore_errors: true
  
-- name: copy extra templates
-  copy:
-    src: oc_extra_templates.yaml
-    dest: "{{ infrared_dir}/plugins/tripleo-overcloud/vars/deployment/files/"
-
 - name: install overcloud
   shell: |
     source {{ infrared_venv }}
-    infrared tripleo-overcloud --version {{ openstack.version }} --introspect yes --tagging yes --deploy yes --post yes --deployment-files virt --controller-nodes {{ openstack.controller.count }} --compute-nodes {{ openstack.computes.count }} --overcloud-templates {{ infrared_dir}/plugins/tripleo-overcloud/vars/deployment/files/oc_extra_templates.yml --deployment-timeout 180 --extra-deploy-params="-n /home/stack/network_data.yaml" 
+    infrared tripleo-overcloud --version {{ openstack.version }} --deployment-files virt --controller-nodes {{ openstack.controller.count }} --compute-nodes {{ openstack.compute.count }} --overcloud-templates {{ infrared_dir }}/plugins/tripleo-overcloud/vars/deployment/files/oc_extra_templates.yaml --instackenv-file {{ infrared_dir }}/plugins/tripleo-overcloud/vars/deployment/files/instackenv.json --deployment-timeout 180 --extra-deploy-params="-n /home/stack/network_data.yaml"
   args:
     chdir: "{{ infrared_dir }}"
   ignore_errors: true

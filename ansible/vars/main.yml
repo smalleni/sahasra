@@ -1,3 +1,41 @@
+openstack:
+    version: 14
+    build: passed_phase2
+    undercloud:
+      count: 1
+      vcpus: 8
+      memory: 24576
+    controller:
+      count: 1
+      vcpus: 4
+      memory: 8192
+    compute:
+      count: 1
+      vcpus: 8
+      memory: 32768
+infrared:
+    hypervisor: f12-h17-b07-5039ms.rdu2.scalelab.redhat.com
+    host_key: ~/.ssh/id_rsa
+    openshift_plugin_repo:
+    overcommit: true
+openshift:
+  master:
+    count: 1
+    vcpus: 4
+    memory: 16384
+  worker:
+    count: 1
+    vcpus: 4
+    memory: 8192
+  infra:
+    count: 1
+    vcpus: 2
+    memory: 8192
+  tester:
+    count: 1
+    vcpus: 2
+    memory: 4096
+
 release: rocky
 build: current-tripleo-rdo
 delorean_url: "https://trunk.rdoproject.org/centos7-{{release}}/{{build}}/delorean.repo"
