@@ -70,7 +70,7 @@
 - name: install overcloud
   shell: |
     source {{ infrared_venv }}
-    infrared tripleo-overcloud --version {{ openstack.version }} --deployment-files virt --controller-nodes {{ openstack.controller.count }} --compute-nodes {{ openstack.compute.count }} --overcloud-templates {{ infrared_dir }}/plugins/tripleo-overcloud/vars/deployment/files/oc_extra_templates.yaml --instackenv-file {{ infrared_dir }}/plugins/tripleo-overcloud/vars/deployment/files/instackenv.json --deployment-timeout 180 --extra-deploy-params="-n /home/stack/network_data.yaml"
+    infrared tripleo-overcloud --version {{ openstack.version }} --deploy yes --deployment-files virt --controller-nodes {{ openstack.controller.count }} --compute-nodes {{ openstack.compute.count }} --overcloud-templates {{ infrared_dir }}/plugins/tripleo-overcloud/vars/deployment/files/oc_extra_templates.yaml --instackenv-file {{ infrared_dir }}/plugins/tripleo-overcloud/vars/deployment/files/instackenv.json --deployment-timeout 180 --extra-deploy-params="-n /home/stack/network_data.yaml"
   args:
     chdir: "{{ infrared_dir }}"
   ignore_errors: true
