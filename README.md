@@ -5,8 +5,10 @@ export WORKSPACE=/some/path
 ## Usage
 - create ssh-key and add it to authorized_keys
 - Setup the vms
+
 	ansible-playbook bootstrap.yml
 - install openshift and openstack, create fake nodes
+
 	ansible-playbook deploy-stacks.yml
 
 ## Design
