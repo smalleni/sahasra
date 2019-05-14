@@ -4,12 +4,9 @@ export WORKSPACE=/some/path
 
 ## Usage
 - create ssh-key and add it to authorized_keys
-- Setup the vms
+- Run deploy.sh which using the infrared setups the vms, install openshift and openstack, creates fake nodes
 
-	ansible-playbook bootstrap.yml
-- install openshift and openstack, create fake nodes
-
-	ansible-playbook deploy-stacks.yml
+	deploy.sh
 
 ## Design
 Design document is at
