@@ -4,9 +4,9 @@ set -x
 DEVICE=eth0
 MY_MACADDR=$( ip addr show ${DEVICE} | grep -Po 'link/ether \K[\da-f:]+'  )
 MY_IP=$( ip addr show ${DEVICE} | grep -Po 'inet \K[\d.]+'  )
-MY_HOSTNAME=$( cat /etc/hostname )
+BRIDGE_MAPPINGS=$( grep -Po '[=,].+:br-ex' /openvswitch_agent.ini | cut -d, -f2 | cut -d= -f2 )
 
-WRITE_CONF="/write_config.py -e container_ip=${MY_IP} -e container_hostname=${MY_HOSTNAME}"
+WRITE_CONF="/write_config.py -e container_ip=${MY_IP} -e bridge_mappings=${BRIDGE_MAPPINGS}"
 
 if [ ! -f /etc/hosts.docker ]; then
     cp /etc/hosts /etc/hosts.docker

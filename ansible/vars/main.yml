@@ -42,5 +42,8 @@ release: rocky
 build: current-tripleo-rdo
 delorean_url: "https://trunk.rdoproject.org/centos7-{{release}}/{{build}}/delorean.repo"
 delorean_deps_url: "https://trunk.rdoproject.org/centos7-{{release}}/delorean-deps.repo"
+docker_simulate_node_image: 192.168.24.1:8787/compute_node
+replicaset_label: compute-node
+replicas: 2
 
 cluster_cidr: 10.128.0.0/14

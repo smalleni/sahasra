@@ -11,5 +11,7 @@
   roles:
     - infrared-introspect
     - infrared-openshift
+    - infrared-hosts
     - infrared-overcloud
+    - simulate-compute
 

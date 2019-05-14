@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: "{{ replicaset_label }}"
+  labels:
+    app: "{{ replicaset_label }}"
+spec:
+  replicas: "{{ replicas }}"
+  selector:
+    matchLabels:
+      app: "{{ replicaset_label }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ replicaset_label }}"
+    spec:
+      containers:
+      - image: "{{ docker_simulate_node_image }}"
+        name: "{{ replicaset_label }}"
+        securityContext:
+          privileged: true

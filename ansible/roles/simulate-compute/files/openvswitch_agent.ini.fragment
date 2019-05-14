@@ -1,4 +1,5 @@
 [ovs]
+bridge_mappings=%(bridge_mappings)s
 local_ip=%(container_ip)s
 
 [securitygroup]

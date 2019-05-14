@@ -1,0 +1,61 @@
+---
+- name: copy config files
+  fetch:
+    src: "{{ item }}"
+    dest: "{{ role_path }}/files/"
+    flat: yes
+  with_items:
+    - /etc/hosts
+    - /var/lib/config-data/puppet-generated/nova_libvirt/etc/nova/nova.conf
+    - /var/lib/config-data/puppet-generated/neutron/etc/neutron/neutron.conf
+    - /var/lib/config-data/puppet-generated/neutron/etc/neutron/plugins/ml2/openvswitch_agent.ini
+  become: yes
+  delegate_to: compute-0
+
+- name: create fake-replicaset.yaml
+  template:
+    src: fake-replicaset.yml.j2
+    dest: "{{ role_path }}/files/fake-replicaset.yaml"
+
+- name: Copy simulate compute files to worker-0
+  copy:
+    src: "{{ item }}"
+    dest: /home/heat-admin/files/
+  with_fileglob:
+    - "*"
+  remote_user: heat-admin
+  delegate_to: openshift-worker-0
+
+- name: create docker image
+  docker_image:
+    name: "{{ docker_simulate_node_image }}"
+    path: "/home/heat-admin/files"
+    force: yes
+    buildargs:
+      delorean_url: "{{ delorean_url }}"
+      delorean_deps_url: "{{ delorean_deps_url }}"
+    push: yes
+  become: yes
+  delegate_to: openshift-worker-0
+
+- name: copy fake-replicaset.yaml to master
+  copy:
+    src: fake-replicaset.yaml
+    dest: /home/tripleo-admin/
+  become: yes
+  become_user: tripleo-admin
+  delegate_to: openshift-master-0
+
+- name: set privilege mode to default user
+  shell: |
+    oc adm policy add-scc-to-user privileged -z default
+  become: yes
+  become_user: tripleo-admin
+  delegate_to: openshift-master-0
+  
+- name: run fake-replicaset.yaml
+  shell: |
+    oc create -f /home/tripleo-admin/fake-replicaset.yaml
+  become: yes
+  become_user: tripleo-admin
+  delegate_to: openshift-master-0   

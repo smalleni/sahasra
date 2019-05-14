@@ -20,15 +20,14 @@ RUN \
 COPY ./nova.conf.fragment /etc/nova/
 COPY ./neutron.conf.fragment /etc/neutron/
 COPY ./openvswitch_agent.ini.fragment /etc/neutron/
+COPY ./hosts /
+COPY ./openvswitch_agent.ini /
+COPY ./neutron.conf /
+COPY ./nova.conf /
 
 # etc
 
 
-VOLUME /etc/nova/original
-VOLUME /etc/neutron/original
-
-# we want to mount /etc/hosts_compute as a file
-# VOLUME /etc/hosts_compute
 
 COPY ./fake_vif.py /fake_vif.py
 COPY ./write_config.py /write_config.py

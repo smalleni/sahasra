@@ -4,5 +4,6 @@
   copy:
     src: "{{ infrared_workspace }}/.workspaces/active/hosts"
     dest: "{{ playbook_dir }}"
+    force: yes
 
 
