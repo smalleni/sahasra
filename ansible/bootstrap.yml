@@ -14,7 +14,8 @@
   roles:
     - infrared-install
     - infrared-provision
-    - infrared-hosts
     - infrared-undercloud
-    - infrared-templates
+    - infrared-introspect
+    - infrared-openshift
+    - infrared-hosts
 

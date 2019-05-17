@@ -1,0 +1,51 @@
+---
+- name: install rhel7 and openshift repos
+  shell: |
+    rpm -i http://rhos-release.virt.bos.redhat.com/repos/rhos-release/rhos-release-latest.noarch.rpm
+    rhos-release 14-director -p passed_phase2 --without-ceph -t /tmp
+    cp /tmp/rhos-release-rhel-7.6.repo /etc/yum.repos.d/
+    curl -o /etc/yum.repos.d/ose-v3.repo 'http://download-node-02.eng.bos.redhat.com/rcm-guest/puddles/RHAOS/AtomicOpenShift/3.11/latest/puddle.repo'
+    yum update -y
+
+- name: disable IPv6
+  shell: |
+    sysctl -w net.ipv6.conf.all.disable_ipv6=1
+    sysctl -w net.ipv6.conf.default.disable_ipv6=1
+
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+    use_backend: yum
+
+- name: ensure a list of packages are installed
+  yum:
+    name: "{{ packages }}"
+    use_backend: yum
+  vars:
+    packages:
+    - vim
+    - git
+    - wget
+    - curl
+    - NetworkManager
+    - tmux
+    - tcpdump
+
+- name: Start NetworkManager Service
+  systemd:
+    state: started
+    name: NetworkManager
+
+- name: Copy the DNS Host entries to the remote server
+  copy:
+    src: ./etc-hosts.txt
+    dest: /tmp/etc-hosts.txt
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Update DNS entries in /etc/hosts
+  shell: cat /tmp/etc-hosts.txt >> /etc/hosts
+
+
